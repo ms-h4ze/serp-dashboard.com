@@ -19,3 +19,6 @@ benchmarks/graphs
 
 # MAC OS
 .DS_store
+
+# dotenv
+.env
