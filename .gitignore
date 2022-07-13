@@ -23,4 +23,5 @@ benchmarks/graphs
 # dotenv
 .env
 
+!example-report.csv
 public/reports
