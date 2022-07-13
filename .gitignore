@@ -22,3 +22,5 @@ benchmarks/graphs
 
 # dotenv
 .env
+
+public/reports
