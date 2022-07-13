@@ -227,7 +227,7 @@ router.get('/', async function(req, res) {
       + link.replaceAll(',', '，').replaceAll('"', '”') + csvSeparator
       + position + csvSeparator
       + title.replaceAll(',', '，').replaceAll('"', '”') + csvSeparator
-      + description.replaceAll(',', '，').replaceAll('"', '”')
+      + description.replaceAll(',', '，').replaceAll('"', '”'),
     );
   }
 
@@ -251,13 +251,13 @@ router.get('/', async function(req, res) {
           params.hl, // language (ISO 639-1)
           params.device, // device (desktop / mobile)
           'gambling brand', // keyword_type
-          keyword, // keyword
+          keyword ?? '', // keyword
           volume, // keyword volume
-          'domain', // domain
-          result.link, // link
+          (new URL(result.link)).hostname ?? '', // domain
+          result.link ?? '', // link
           result.position, // position
-          result.title, // title
-          result.snippet, // description
+          result.title ?? '', // title
+          result.snippet ?? '', // description
         );
       }
     });
