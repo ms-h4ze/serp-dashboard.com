@@ -24,3 +24,4 @@ benchmarks/graphs
 .env
 
 !example-report.csv
+public/reports/*.csv
