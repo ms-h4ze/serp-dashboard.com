@@ -4,18 +4,153 @@ block content
   h1= title
   p Welcome to #{title}
   br
-  p Dashboard Iframe
-  img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png")
+  h2 Dashboard
+  select
+    option google.co.jp
+  select
+    option Desktop
+    option Mobile
   br
-  p Reports
+  br
+  div(class='container')
+    div(class='item') Categories
+      ul
+        li
+          a(href="#") All Categories
+        li
+          a(href="#") Gambling (brand + review)
+        li
+          a(href="#") Gambling (only review websites)
+        li
+          a(href="#") Gambling (only brand websites)
+
+    div(class='item')
+      img(src="/images/example-dashboard.png", width='90%', title='Example Image')
+  br
+  h2 Reports (Desktop, switch to mobile for see mobile reports)
   ul
-    li
-      a(href="#") Daily
-    li
-      a(href="#") Weekly
-    li
-      a(href="#") Monthly
-  p Some data
+    li Daily
+      ul
+        li
+          a(href="#") Gambling (brand + review)
+        li
+          a(href="#") Gambling (brand)
+        li
+          a(href="#") Gambling (review)
+    li Weekly
+      ul
+        li
+          a(href="#") Gambling (brand + review)
+        li
+          a(href="#") Gambling (brand)
+        li
+          a(href="#") Gambling (review)
+    li Monthly
+      ul
+        li
+          a(href="#") Gambling (brand + review)
+        li
+          a(href="#") Gambling (brand)
+        li
+          a(href="#") Gambling (review)
+  br
+  h2 Some data
   ul
-    li Title Length: 00
-    li Description Length: 00
+    li Title Length: 50, 00, 100 (middle, min, max; By top 10; Desktop and Mobile)
+    li Description Length: 50, 00, 100 (middle, min, max; By top 10; Desktop and Mobile)
+
+  h2 Drafts / Ideas
+  p Some data we can process (Once a month, by domains) (Not first priority, just ideas, unavailable now)
+  ul
+    li Pages in google index (By top 10)
+    li Pagespeed (By top 10)
+    li Domain zones (By top 10)
+    li Url Nesting Level (By top 10)
+    li Average Age (by whois or web archive) (By top 10)
+    li Headings stats (h1-h3 count / length) (By top 10)
+
+    li Traffic differences between month's (Alexa, Similarweb, Ahrefs, etc) (By top 10)
+    li Content length (manually by custom parsing some websites)
+    li Keywords Spam count (manually by custom parsing websites and custom keywords)
+
+
+  hr
+
+  p What data we parse, collect, processing
+  table(border=1, width='100%')
+    thead
+      tr
+        td Gambling review keywords
+        td Gambling brand keywords
+        td Spectating Websites (for algorithm update checking)
+    tbody
+      tr(padding='0px')
+        td
+          ul
+            li オンラインカジノ
+            li オンカジ
+            li casino online
+            li online casino in japan
+            li オンラインカジノ 最新
+            li 日本人向け 新規 カジノ
+            li オンカジ ランキング
+            li オンラインカジノ 評価
+            li トップ オンライン カジノ
+            li オンラインカジノ スマホ
+            li オンラインカジノ アプリ
+            li モバイル カジノ
+            li mobile casino japan
+            li オンラインカジノ iphone
+            li ハイローラー カジノ
+            li オンカジ出金早い
+            li 本人確認不要 カジノ
+            li 本人確認なし オンカジ
+            li カジノ vip
+            li オンライン カジノ 信頼
+            li オンラインカジノ 出金無制限
+            li オンラインカジノ 世界 カジノ
+            li オンラインカジノ 日本語
+            li ジャパニーズ カジノ
+            li オンラインカジノ 日本円
+            li アメリカ オンラインカジノ
+            li オンラインカジノ フィリピン
+            li リアルカジノ
+            li 500 円 から 入金 できる カジノ
+            li 10ドルから
+            li オンライン カジノ 一覧
+        td
+          ul
+            li ベラジョンカジノ
+            li スポーツベットアイオー
+            li カジノシークレット
+            li bet365 / ベット365
+            li ミスティーノ
+            li カジ旅
+            li エルドア カジノ
+            li インターカジノ
+            li ビットカジノ
+            li コニベット
+            li 優雅 堂
+            li オンラインカジノ netbet
+            li クイーンカジノ
+            li ボンズカジノ
+            li ワンダーカジノ
+            li ラッキーニッキー
+            li ユースカジノ
+        td
+          ul
+            li site.ru
+              ul
+                li key
+                li key
+                li key
+            li site.ru
+              ul
+                li key
+                li key
+                li key
+            li site.ru
+              ul
+                li key
+                li key
+                li key
