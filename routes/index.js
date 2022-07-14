@@ -3,6 +3,8 @@ var router = express.Router();
 require('dotenv').config();
 const SerpApi = require('google-search-results-nodejs');
 const fs = require('fs');
+const config = require('config');
+
 
 /* GET home page. */
 router.get('/', async function(req, res) {
@@ -131,10 +133,10 @@ router.get('/', async function(req, res) {
     ['ロケットポット', 10],
     ['rocketpot', 10],
     ];
-
-  // brand keywords with volume 10000+
+  const minVolume = config.get('minVolume');
+  // brand keywords with volume n+
   const testKeywords = brandKeywords.reduce((acc, rec) => {
-    if (rec[1] >= 10000) {
+    if (rec[1] >= minVolume) {
       acc.push(rec);
     }
     return acc;
