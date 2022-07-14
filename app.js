@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cron = require('node-cron');
 const axios = require("axios");
+const config = require('config');
+const configPort = config.get('port') || 3001;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -55,7 +57,7 @@ const checkDashboard = async url => {
 
 cron.schedule('0 * * * *', () => {
   console.log('checkDashboard task every hour');
-  let url = 'http://127.0.0.1:3001';
+  let url = `http://127.0.0.1:${configPort}`;
   checkDashboard(url);
 });
 
