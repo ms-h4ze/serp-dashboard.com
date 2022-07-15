@@ -240,7 +240,7 @@ router.get('/', async function(req, res) {
 
     // parse desktop SERP
     testKeywords.map(async ([keyword, volume]) => {
-      console.log('working with keyword ' + keyword + ` (${volume})`);
+      console.log('working with keyword ' + keyword + ` (${volume}) (desktop serp)`);
       const serpJSON = await getSerpJSON(keyword, "desktop");
       const params = serpJSON.search_parameters;
       const organicResults = serpJSON.organic_results;
@@ -268,7 +268,7 @@ router.get('/', async function(req, res) {
 
     // parse mobile SERP
     testKeywords.map(async ([keyword, volume]) => {
-      console.log('working with keyword ' + keyword + ` (${volume})`);
+      console.log('working with keyword ' + keyword + ` (${volume}) (mobile serp)`);
       const serpJSON = await getSerpJSON(keyword, "mobile");
       const params = serpJSON.search_parameters;
       const organicResults = serpJSON.organic_results;
