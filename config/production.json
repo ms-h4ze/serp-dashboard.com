@@ -1,5 +1,5 @@
 {
   "port": 8080,
   "baseUrl": "https://serp-dashboard.com",
-  "minVolume": 0
+  "minVolume": 1000
 }
