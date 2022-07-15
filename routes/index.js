@@ -142,7 +142,7 @@ router.get('/', async function(req, res) {
     return acc;
   }, []);
 
-  const getSerpJSON = async (keyword) => {
+  const getSerpJSON = async (keyword, device) => {
     const search = new SerpApi.GoogleSearch(process.env.serp_api_key);
 
     const params = {
@@ -152,7 +152,8 @@ router.get('/', async function(req, res) {
       google_domain: "google.co.jp",
       gl: "jp",
       hl: "ja",
-      num: "100"
+      num: "100",
+      device: device
     };
 
     const serpObject = new Promise((resolve) => {
@@ -237,9 +238,38 @@ router.get('/', async function(req, res) {
   if (!isTodayReportFileExists()) {
     createTodayReportFile();
 
+    // parse desktop SERP
     testKeywords.map(async ([keyword, volume]) => {
       console.log('working with keyword ' + keyword + ` (${volume})`);
-      const serpJSON = await getSerpJSON(keyword);
+      const serpJSON = await getSerpJSON(keyword, "desktop");
+      const params = serpJSON.search_parameters;
+      const organicResults = serpJSON.organic_results;
+
+      for (const result of organicResults) {
+        writeToTodayReportFile(
+          todayDateForReport, // date
+          params.location_used, // location
+          params.engine, // search_engine
+          params.google_domain, // search_engine_domain
+          params.gl, // country (ISO 3166-1 alpha-2)
+          params.hl, // language (ISO 639-1)
+          params.device, // device (desktop / mobile)
+          'gambling brand', // keyword_type
+          keyword ?? '', // keyword
+          volume, // keyword volume
+          (new URL(result.link)).hostname ?? '', // domain
+          result.link ?? '', // link
+          result.position, // position
+          result.title ?? '', // title
+          result.snippet ?? '', // description
+        );
+      }
+    });
+
+    // parse mobile SERP
+    testKeywords.map(async ([keyword, volume]) => {
+      console.log('working with keyword ' + keyword + ` (${volume})`);
+      const serpJSON = await getSerpJSON(keyword, "mobile");
       const params = serpJSON.search_parameters;
       const organicResults = serpJSON.organic_results;
 
