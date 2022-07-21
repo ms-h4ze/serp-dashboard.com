@@ -493,7 +493,8 @@ router.get("/snapshot/", (req, res) => {
         .reduce((acc, rec) => {
           const [url, position] = [rec.split(",")[11], rec.split(",")[12]];
           // acc.push([keyword, url, position])
-          acc.push(url);
+          const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
+          acc.push(urlWithoutProtocol);
           return acc;
         }, [])
     );
