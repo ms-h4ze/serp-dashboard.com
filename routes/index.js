@@ -4,6 +4,12 @@ require("dotenv").config();
 const SerpApi = require("google-search-results-nodejs");
 const fs = require("fs");
 const config = require("config");
+// const axios = require("axios");
+
+let averageTitleLength;
+let averageDescriptionLength;
+let averageTitleLengthMobile;
+let averageDescriptionLengthMobile;
 
 /* GET home page. */
 router.get("/", async function (req, res) {
@@ -334,7 +340,63 @@ router.get("/", async function (req, res) {
     console.log("Report " + todayDateFileName + ".csv" + " exists");
   }
 
-  res.render("index", { title: "SERP Dashboard" });
+  if (averageTitleLength === undefined) {
+    console.log('parsing title desctiption average length');
+    return res.redirect('/data/');
+  }
+
+  res.render("index", { title: "SERP Dashboard", averageTitleLength, averageDescriptionLength, averageTitleLengthMobile, averageDescriptionLengthMobile });
 });
 
+router.get('/data/', (req, res) => {
+  const getLastReportFileName = () => {
+    const files = fs.readdirSync('public/reports');
+    return files.filter(el => el !== 'example-report.csv').reverse()[0];
+  }
+
+  const getMeta = (device) => {
+    const youngestReportFileName = getLastReportFileName();
+    const reportData = fs.readFileSync('public/reports/' + youngestReportFileName,{encoding:'utf8', flag:'r'});
+    const strings = reportData.split('\n');
+    return strings
+      .filter((el) => {
+        const deviceInTable = el.split(',')[6] // device type in table
+        if (device === deviceInTable) {
+          return el;
+        }
+      })
+      .reduce((acc, rec) => {
+      const [title, description] = [rec.split(',')[13], rec.split(',')[14]];
+      acc.push([title, description])
+      return acc;
+    }, [])
+  }
+
+  const getAverageLength = (titleOrDescription, device) => {
+    const meta = getMeta(device);
+
+    const amountElements = meta.length;
+    let sumLength = 0;
+
+    meta.map((el) => {
+      let exactElement;
+      if (titleOrDescription === 'title') {
+        exactElement = el[0].split(' ...')[0];
+      } else {
+        exactElement = el[1].split(' ...')[0];
+      }
+      sumLength += exactElement.length;
+    })
+
+    return sumLength / amountElements;
+  }
+
+
+  averageTitleLength = getAverageLength('title', 'desktop');
+  averageDescriptionLength = getAverageLength('description', 'desktop');
+  averageTitleLengthMobile = getAverageLength('title', 'mobile');
+  averageDescriptionLengthMobile = getAverageLength('description', 'mobile');
+  // res.send([averageTitleLength, averageDescriptionLength, averageTitleLengthMobile, averageDescriptionLengthMobile])
+  res.status(301).redirect('/');
+})
 module.exports = router;
