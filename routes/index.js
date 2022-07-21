@@ -8,9 +8,13 @@ const config = require("config");
 const emojiRegex = require("emoji-regex");
 
 let averageTitleLength;
+let maxTitleLength = 0;
 let averageDescriptionLength;
+let maxDescriptionLength = 0;
 let averageTitleLengthMobile;
+let maxTitleLengthMobile = 0;
 let averageDescriptionLengthMobile;
+let maxDescriptionLengthMobile = 0;
 let bonsSnapshot;
 let conquestadorSnapshot;
 let titleEmojis = [];
@@ -358,9 +362,13 @@ router.get("/", async function (req, res) {
   res.render("index", {
     title: "SERP Dashboard",
     averageTitleLength,
+    maxTitleLength,
     averageDescriptionLength,
+    maxDescriptionLength,
     averageTitleLengthMobile,
+    maxTitleLengthMobile,
     averageDescriptionLengthMobile,
+    maxDescriptionLengthMobile,
     bonsSnapshot,
     conquestadorSnapshot,
     titleEmojis,
@@ -407,6 +415,15 @@ router.get("/data/", (req, res) => {
 
       if (titleOrDescription === "title") {
         exactElement = el[0].split(" ...")[0];
+        if (device === "desktop") {
+          if (maxTitleLength < exactElement.length) {
+            maxTitleLength = exactElement.length;
+          }
+        } else if (device === "mobile") {
+          if (maxTitleLengthMobile < exactElement.length) {
+            maxTitleLengthMobile = exactElement.length;
+          }
+        }
         for (const match of exactElement.matchAll(regex)) {
           const emoji = match[0];
           console.log(
@@ -416,6 +433,15 @@ router.get("/data/", (req, res) => {
         }
       } else {
         exactElement = el[1].split(" ...")[0];
+        if (device === "desktop") {
+          if (maxDescriptionLength < exactElement.length) {
+            maxDescriptionLength = exactElement.length;
+          }
+        } else if (device === "mobile") {
+          if (maxDescriptionLengthMobile < exactElement.length) {
+            maxDescriptionLengthMobile = exactElement.length;
+          }
+        }
         for (const match of exactElement.matchAll(regex)) {
           const emoji = match[0];
           // console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
