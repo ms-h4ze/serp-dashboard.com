@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
+var filesize = require("filesize");
 
 /* GET Reports page */
 router.get("/", (req, res) => {
@@ -8,6 +9,8 @@ router.get("/", (req, res) => {
 
   const fileNamesArray = fs.readdirSync("public/reports");
   fileNamesArray.map((filename) => {
+    var stats = fs.statSync("public/reports/" + filename);
+
     if (filename.length === 12) {
       // exclude example-report by filename length
       files.push({
@@ -18,6 +21,7 @@ router.get("/", (req, res) => {
           "." +
           filename.slice(4, 8),
         url: "/reports/" + filename,
+        size: filesize(stats.size, { round: 0 }),
       });
     }
   });
