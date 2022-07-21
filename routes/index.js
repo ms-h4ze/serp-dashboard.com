@@ -5,6 +5,7 @@ const SerpApi = require("google-search-results-nodejs");
 const fs = require("fs");
 const config = require("config");
 // const axios = require("axios");
+const emojiRegex = require('emoji-regex');
 
 let averageTitleLength;
 let averageDescriptionLength;
@@ -12,6 +13,8 @@ let averageTitleLengthMobile;
 let averageDescriptionLengthMobile;
 let bonsSnapshot;
 let conquestadorSnapshot;
+let titleEmojis = [];
+let descriptionEmojis = [];
 
 /* GET home page. */
 router.get("/", async function (req, res) {
@@ -353,7 +356,8 @@ router.get("/", async function (req, res) {
   }
 
   res.render("index", { title: "SERP Dashboard", averageTitleLength, averageDescriptionLength,
-    averageTitleLengthMobile, averageDescriptionLengthMobile, bonsSnapshot, conquestadorSnapshot });
+    averageTitleLengthMobile, averageDescriptionLengthMobile, bonsSnapshot, conquestadorSnapshot, titleEmojis,
+    descriptionEmojis});
 });
 
 router.get('/data/', (req, res) => {
@@ -388,10 +392,22 @@ router.get('/data/', (req, res) => {
 
     meta.map((el) => {
       let exactElement;
+      const regex = emojiRegex();
+
       if (titleOrDescription === 'title') {
         exactElement = el[0].split(' ...')[0];
+        for (const match of exactElement.matchAll(regex)) {
+          const emoji = match[0];
+          console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
+          titleEmojis.push(emoji);
+        }
       } else {
         exactElement = el[1].split(' ...')[0];
+        for (const match of exactElement.matchAll(regex)) {
+          const emoji = match[0];
+          // console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
+          descriptionEmojis.push(emoji);
+        }
       }
       sumLength += exactElement.length;
     })
@@ -404,6 +420,8 @@ router.get('/data/', (req, res) => {
   averageDescriptionLength = getAverageLength('description', 'desktop');
   averageTitleLengthMobile = getAverageLength('title', 'mobile');
   averageDescriptionLengthMobile = getAverageLength('description', 'mobile');
+  titleEmojis = [...new Set(titleEmojis)]; // remove duplicates
+  descriptionEmojis = [...new Set(descriptionEmojis)]; // remove duplicates
   // res.send([averageTitleLength, averageDescriptionLength, averageTitleLengthMobile, averageDescriptionLengthMobile])
   res.status(301).redirect('/');
 })
