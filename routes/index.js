@@ -5,7 +5,7 @@ const SerpApi = require("google-search-results-nodejs");
 const fs = require("fs");
 const config = require("config");
 // const axios = require("axios");
-const emojiRegex = require('emoji-regex');
+const emojiRegex = require("emoji-regex");
 
 let averageTitleLength;
 let averageDescriptionLength;
@@ -346,43 +346,54 @@ router.get("/", async function (req, res) {
   }
 
   if (averageTitleLength === undefined) {
-    console.log('parsing title desctiption average length');
-    return res.redirect('/data/');
+    console.log("parsing title desctiption average length");
+    return res.redirect("/data/");
   }
 
   if (bonsSnapshot === undefined) {
-    console.log('parsing snapshots');
-    return res.redirect('/snapshot/');
+    console.log("parsing snapshots");
+    return res.redirect("/snapshot/");
   }
 
-  res.render("index", { title: "SERP Dashboard", averageTitleLength, averageDescriptionLength,
-    averageTitleLengthMobile, averageDescriptionLengthMobile, bonsSnapshot, conquestadorSnapshot, titleEmojis,
-    descriptionEmojis});
+  res.render("index", {
+    title: "SERP Dashboard",
+    averageTitleLength,
+    averageDescriptionLength,
+    averageTitleLengthMobile,
+    averageDescriptionLengthMobile,
+    bonsSnapshot,
+    conquestadorSnapshot,
+    titleEmojis,
+    descriptionEmojis,
+  });
 });
 
-router.get('/data/', (req, res) => {
+router.get("/data/", (req, res) => {
   const getLastReportFileName = () => {
-    const files = fs.readdirSync('public/reports');
-    return files.filter(el => el !== 'example-report.csv').reverse()[0];
-  }
+    const files = fs.readdirSync("public/reports");
+    return files.filter((el) => el !== "example-report.csv").reverse()[0];
+  };
 
   const getMeta = (device) => {
     const youngestReportFileName = getLastReportFileName();
-    const reportData = fs.readFileSync('public/reports/' + youngestReportFileName,{encoding:'utf8', flag:'r'});
-    const strings = reportData.split('\n');
+    const reportData = fs.readFileSync(
+      "public/reports/" + youngestReportFileName,
+      { encoding: "utf8", flag: "r" }
+    );
+    const strings = reportData.split("\n");
     return strings
       .filter((el) => {
-        const deviceInTable = el.split(',')[6] // device type in table
+        const deviceInTable = el.split(",")[6]; // device type in table
         if (device === deviceInTable) {
           return el;
         }
       })
       .reduce((acc, rec) => {
-      const [title, description] = [rec.split(',')[13], rec.split(',')[14]];
-      acc.push([title, description])
-      return acc;
-    }, [])
-  }
+        const [title, description] = [rec.split(",")[13], rec.split(",")[14]];
+        acc.push([title, description]);
+        return acc;
+      }, []);
+  };
 
   const getAverageLength = (titleOrDescription, device) => {
     const meta = getMeta(device);
@@ -394,15 +405,17 @@ router.get('/data/', (req, res) => {
       let exactElement;
       const regex = emojiRegex();
 
-      if (titleOrDescription === 'title') {
-        exactElement = el[0].split(' ...')[0];
+      if (titleOrDescription === "title") {
+        exactElement = el[0].split(" ...")[0];
         for (const match of exactElement.matchAll(regex)) {
           const emoji = match[0];
-          console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
+          console.log(
+            `Matched sequence ${emoji} — code points: ${[...emoji].length}`
+          );
           titleEmojis.push(emoji);
         }
       } else {
-        exactElement = el[1].split(' ...')[0];
+        exactElement = el[1].split(" ...")[0];
         for (const match of exactElement.matchAll(regex)) {
           const emoji = match[0];
           // console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
@@ -410,56 +423,59 @@ router.get('/data/', (req, res) => {
         }
       }
       sumLength += exactElement.length;
-    })
+    });
 
     return sumLength / amountElements;
-  }
+  };
 
-
-  averageTitleLength = getAverageLength('title', 'desktop');
-  averageDescriptionLength = getAverageLength('description', 'desktop');
-  averageTitleLengthMobile = getAverageLength('title', 'mobile');
-  averageDescriptionLengthMobile = getAverageLength('description', 'mobile');
+  averageTitleLength = getAverageLength("title", "desktop");
+  averageDescriptionLength = getAverageLength("description", "desktop");
+  averageTitleLengthMobile = getAverageLength("title", "mobile");
+  averageDescriptionLengthMobile = getAverageLength("description", "mobile");
   titleEmojis = [...new Set(titleEmojis)]; // remove duplicates
   descriptionEmojis = [...new Set(descriptionEmojis)]; // remove duplicates
   // res.send([averageTitleLength, averageDescriptionLength, averageTitleLengthMobile, averageDescriptionLengthMobile])
-  res.status(301).redirect('/');
-})
+  res.status(301).redirect("/");
+});
 
-
-router.get('/snapshot/', (req, res) => {
+router.get("/snapshot/", (req, res) => {
   const getLastReportFileName = () => {
-    const files = fs.readdirSync('public/reports');
-    return files.filter(el => el !== 'example-report.csv').reverse()[0];
-  }
+    const files = fs.readdirSync("public/reports");
+    return files.filter((el) => el !== "example-report.csv").reverse()[0];
+  };
 
   const getSnapshot = (keyword, device) => {
     const youngestReportFileName = getLastReportFileName();
-    const reportData = fs.readFileSync('public/reports/' + youngestReportFileName,{encoding:'utf8', flag:'r'});
-    const strings = reportData.split('\n');
-    return strings
-      // .filter((el) => {
-      //   const deviceInTable = el.split(',')[6] // device type in table
-      //   if (device === deviceInTable) {
-      //     return el;
-      //   }
-      // })
-      .filter((el) => {
-        if (keyword === el.split(',')[8]) {
-          return el;
-        }
-      })
-      .reduce((acc, rec) => {
-        const [ url, position] = [ rec.split(',')[11], rec.split(',')[12]];
-        acc.push([keyword, url, position])
-        return acc;
-      }, [])
-  }
+    const reportData = fs.readFileSync(
+      "public/reports/" + youngestReportFileName,
+      { encoding: "utf8", flag: "r" }
+    );
+    const strings = reportData.split("\n");
+    return (
+      strings
+        // .filter((el) => {
+        //   const deviceInTable = el.split(',')[6] // device type in table
+        //   if (device === deviceInTable) {
+        //     return el;
+        //   }
+        // })
+        .filter((el) => {
+          if (keyword === el.split(",")[8]) {
+            return el;
+          }
+        })
+        .reduce((acc, rec) => {
+          const [url, position] = [rec.split(",")[11], rec.split(",")[12]];
+          // acc.push([keyword, url, position])
+          acc.push(url);
+          return acc;
+        }, [])
+    );
+  };
 
-  bonsSnapshot = getSnapshot('ボンズカジノ');
-  conquestadorSnapshot = getSnapshot('コンクエスタドールカジノ');
+  bonsSnapshot = getSnapshot("ボンズカジノ");
+  conquestadorSnapshot = getSnapshot("コンクエスタドールカジノ");
 
-
-  res.status(302).redirect('back');
-})
+  res.status(302).redirect("back");
+});
 module.exports = router;
