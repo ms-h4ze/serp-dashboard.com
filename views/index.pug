@@ -27,6 +27,21 @@ block content
     div(class='item')
       img(src="/images/example-dashboard.png", width='90%', title='Example Image')
   br
+  h2 Snapshots
+  table(border='1')
+    thead
+    tr
+    td(style={background: 'gray'}) bons
+    td(style={background: 'gray'}) conquestador
+    tbody
+    - for (var i = 0; i <= 10; ++i)
+      tr
+      td #{bonsSnapshot[i][1]}
+      td #{conquestadorSnapshot[i][1]}
+
+
+
+  br
   h2 Reports (Desktop, switch to mobile for see mobile reports)
   ul
     li

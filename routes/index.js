@@ -10,6 +10,8 @@ let averageTitleLength;
 let averageDescriptionLength;
 let averageTitleLengthMobile;
 let averageDescriptionLengthMobile;
+let bonsSnapshot;
+let conquestadorSnapshot;
 
 /* GET home page. */
 router.get("/", async function (req, res) {
@@ -345,7 +347,13 @@ router.get("/", async function (req, res) {
     return res.redirect('/data/');
   }
 
-  res.render("index", { title: "SERP Dashboard", averageTitleLength, averageDescriptionLength, averageTitleLengthMobile, averageDescriptionLengthMobile });
+  if (bonsSnapshot === undefined) {
+    console.log('parsing snapshots');
+    return res.redirect('/snapshot/');
+  }
+
+  res.render("index", { title: "SERP Dashboard", averageTitleLength, averageDescriptionLength,
+    averageTitleLengthMobile, averageDescriptionLengthMobile, bonsSnapshot, conquestadorSnapshot });
 });
 
 router.get('/data/', (req, res) => {
@@ -398,5 +406,42 @@ router.get('/data/', (req, res) => {
   averageDescriptionLengthMobile = getAverageLength('description', 'mobile');
   // res.send([averageTitleLength, averageDescriptionLength, averageTitleLengthMobile, averageDescriptionLengthMobile])
   res.status(301).redirect('/');
+})
+
+
+router.get('/snapshot/', (req, res) => {
+  const getLastReportFileName = () => {
+    const files = fs.readdirSync('public/reports');
+    return files.filter(el => el !== 'example-report.csv').reverse()[0];
+  }
+
+  const getSnapshot = (keyword, device) => {
+    const youngestReportFileName = getLastReportFileName();
+    const reportData = fs.readFileSync('public/reports/' + youngestReportFileName,{encoding:'utf8', flag:'r'});
+    const strings = reportData.split('\n');
+    return strings
+      // .filter((el) => {
+      //   const deviceInTable = el.split(',')[6] // device type in table
+      //   if (device === deviceInTable) {
+      //     return el;
+      //   }
+      // })
+      .filter((el) => {
+        if (keyword === el.split(',')[8]) {
+          return el;
+        }
+      })
+      .reduce((acc, rec) => {
+        const [ url, position] = [ rec.split(',')[11], rec.split(',')[12]];
+        acc.push([keyword, url, position])
+        return acc;
+      }, [])
+  }
+
+  bonsSnapshot = getSnapshot('ボンズカジノ');
+  conquestadorSnapshot = getSnapshot('コンクエスタドールカジノ');
+
+
+  res.status(302).redirect('back');
 })
 module.exports = router;
