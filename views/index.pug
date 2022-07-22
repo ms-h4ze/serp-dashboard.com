@@ -36,8 +36,16 @@ block content
     tbody
     - for (var i = 0; i <= 10; ++i)
       tr
-      td #{bonsSnapshot[i]}
-      td #{conquestadorSnapshot[i]}
+      td #{bonsSnapshot[i][0]}
+        if bonsSnapshot[i][1] > 0
+          span(style="color: green")  +#{bonsSnapshot[i][1]}
+        if bonsSnapshot[i][1] < 0
+          span(style="color: red")  #{bonsSnapshot[i][1]}
+      td #{conquestadorSnapshot[i][0]}
+        if conquestadorSnapshot[i][1] > 0
+          span(style="color: green")  +#{conquestadorSnapshot[i][1]}
+        if conquestadorSnapshot[i][1] < 0
+          span(style="color: red")  #{conquestadorSnapshot[i][1]}
 
 
 

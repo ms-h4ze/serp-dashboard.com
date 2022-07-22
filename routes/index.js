@@ -470,13 +470,45 @@ router.get("/snapshot/", (req, res) => {
     return files.filter((el) => el !== "example-report.csv").reverse()[0];
   };
 
+  const youngestReportFileName = getLastReportFileName();
+
+  const getReportFileNameDayAgo = () => {
+    const files = fs.readdirSync("public/reports");
+    return files.filter((el) => el !== "example-report.csv").reverse()[1];
+  };
+
   const getSnapshot = (keyword, device) => {
-    const youngestReportFileName = getLastReportFileName();
     const reportData = fs.readFileSync(
       "public/reports/" + youngestReportFileName,
       { encoding: "utf8", flag: "r" }
     );
+    const reportDataDayAgo = fs.readFileSync(
+      "public/reports/" + getReportFileNameDayAgo(),
+      { encoding: "utf8", flag: "r" }
+    );
+
     const strings = reportData.split("\n");
+    const stringsDayAgo = reportDataDayAgo.split("\n");
+
+    const getUrlPositionDayAgo = (keyword, device, url) => {
+      const exactString = stringsDayAgo
+        .filter((el) => {
+          if (keyword === el.split(",")[8] && device === el.split(",")[6]) {
+            return el;
+          }
+        })
+        .filter((el) => {
+          if (url === el.split(",")[11]) {
+            return el;
+          }
+        });
+
+      if (exactString.length > 0) {
+        return exactString[0].split(",")[12];
+      }
+      return false;
+    };
+
     return (
       strings
         // .filter((el) => {
@@ -492,9 +524,13 @@ router.get("/snapshot/", (req, res) => {
         })
         .reduce((acc, rec) => {
           const [url, position] = [rec.split(",")[11], rec.split(",")[12]];
-          // acc.push([keyword, url, position])
+          const positionDayAgo = getUrlPositionDayAgo(keyword, device, url);
+          // console.log(`${position} - ${url} - ${positionDayAgo}`);
+          // acc.push([keyword, url, position, positionDayAgo]);
           const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
-          acc.push(urlWithoutProtocol);
+          // acc.push(urlWithoutProtocol);
+          const positionDifference = positionDayAgo - position;
+          acc.push([urlWithoutProtocol, positionDifference]);
           return acc;
         }, [])
     );
@@ -502,6 +538,7 @@ router.get("/snapshot/", (req, res) => {
 
   bonsSnapshot = getSnapshot("ボンズカジノ", "mobile");
   conquestadorSnapshot = getSnapshot("コンクエスタドールカジノ", "mobile");
+  console.log(bonsSnapshot);
 
   res.status(302).redirect("back");
 });
