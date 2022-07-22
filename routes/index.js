@@ -486,7 +486,7 @@ router.get("/snapshot/", (req, res) => {
         //   }
         // })
         .filter((el) => {
-          if (keyword === el.split(",")[8]) {
+          if (keyword === el.split(",")[8] && device === el.split(",")[6]) {
             return el;
           }
         })
@@ -500,8 +500,8 @@ router.get("/snapshot/", (req, res) => {
     );
   };
 
-  bonsSnapshot = getSnapshot("ボンズカジノ");
-  conquestadorSnapshot = getSnapshot("コンクエスタドールカジノ");
+  bonsSnapshot = getSnapshot("ボンズカジノ", "mobile");
+  conquestadorSnapshot = getSnapshot("コンクエスタドールカジノ", "mobile");
 
   res.status(302).redirect("back");
 });
