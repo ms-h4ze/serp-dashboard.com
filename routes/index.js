@@ -15,6 +15,7 @@ let averageTitleLengthMobile;
 let maxTitleLengthMobile = 0;
 let averageDescriptionLengthMobile;
 let maxDescriptionLengthMobile = 0;
+let bonsSnapshotDate;
 let bonsSnapshot;
 let conquestadorSnapshot;
 let titleEmojis = [];
@@ -536,9 +537,14 @@ router.get("/snapshot/", (req, res) => {
     );
   };
 
-  bonsSnapshot = getSnapshot("ボンズカジノ", "mobile");
-  conquestadorSnapshot = getSnapshot("コンクエスタドールカジノ", "mobile");
-  console.log(bonsSnapshot);
+  if (
+    bonsSnapshotDate !== new Date().toJSON().slice(0, 10).replace(/-/g, "/") // today date
+  ) {
+    console.log("set bonsSnapshotDate");
+    bonsSnapshot = getSnapshot("ボンズカジノ", "mobile");
+    bonsSnapshotDate = new Date().toJSON().slice(0, 10).replace(/-/g, "/"); // today date
+    conquestadorSnapshot = getSnapshot("コンクエスタドールカジノ", "mobile");
+  }
 
   res.status(302).redirect("back");
 });
